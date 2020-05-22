@@ -62,10 +62,11 @@ class MainActivity : AppCompatActivity() {
         flipAnimator.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
                 super.onAnimationEnd(animation)
-                holder.itemView.isVisible = false
-                alphaList.removeAt(position)
-                adapter.setAlphaList(alphaList)
-                alphabet_recyclerview.adapter = adapter
+                alphabet_recyclerview.adapter?.notifyDataSetChanged()
+            }
+
+            override fun onAnimationStart(animation: Animator?) {
+                super.onAnimationStart(animation)
             }
         })
         flipAnimator.start()

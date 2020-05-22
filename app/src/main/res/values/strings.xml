@@ -3,4 +3,5 @@
     <string name="dummy_text">A</string>
     <string name="items_list">Items List</string>
     <string name="configure">Configure</string>
+    <string name="animation_speed_error">Animation speed should be more than 100</string>
 </resources>
