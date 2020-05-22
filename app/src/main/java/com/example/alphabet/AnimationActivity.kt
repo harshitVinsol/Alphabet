@@ -29,19 +29,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if (savedInstanceState != null) {
-            alphaList = savedInstanceState.getSerializable(ALPHABET_LIST) as MutableList<Char>
+        alphaList = if (savedInstanceState != null) {
+            savedInstanceState.getSerializable(ALPHABET_LIST) as MutableList<Char>
+        } else {
+            ('A'..'Z').toMutableList()
         }
+
         val width = resources.displayMetrics.widthPixels
-        Log.i("harsh", "Screen width: $width")
+
         alphaLayoutManager = GridLayoutManager(this, GRID_SIZE)
         alphabet_recyclerview.layoutManager = alphaLayoutManager
-        alphabet_recyclerview.itemAnimator = DefaultItemAnimator()
-        alphaList = ('A'..'Z').toMutableList()
         adapter = AlphabetAdapter(
             alphaList,
             width
-        ) { character: Char, position: Int, holder: ViewHolder ->
+        ) { position: Int, holder: ViewHolder ->
             flipAnimation(holder, position)
         }
         alphabet_recyclerview.adapter = adapter
@@ -57,18 +58,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun flipAnimation(holder: ViewHolder, position: Int) {
         val flipAnimator = ObjectAnimator.ofFloat(holder.itemView, View.ROTATION_Y, -180f, 0f)
-        flipAnimator.duration = 500
+        flipAnimator.duration = FLIP_ANIMATION_DURATION
         flipAnimator.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
                 super.onAnimationEnd(animation)
+                holder.itemView.isVisible = false
                 alphaList.removeAt(position)
-                adapter.setAlphaList(alphaList, position)
+                adapter.setAlphaList(alphaList)
                 alphabet_recyclerview.adapter = adapter
-                //alphaList.removeAt(position)
-            }
-
-            override fun onAnimationStart(animation: Animator?) {
-                super.onAnimationStart(animation)
             }
         })
         flipAnimator.start()
@@ -85,5 +82,6 @@ class MainActivity : AppCompatActivity() {
         internal const val ANIMATION_SPEED = "animation_speed"
         internal const val VERTICAL_SPACING = "vertical_spacing"
         internal const val HORIZONTAL_SPACING = "horizontal_spacing"
+        internal const val FLIP_ANIMATION_DURATION = 400L
     }
 }

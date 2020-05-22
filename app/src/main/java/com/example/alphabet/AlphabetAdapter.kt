@@ -20,13 +20,12 @@ Class AddressAdapter to be used in RecyclerView for showing addresses having lis
 class AlphabetAdapter(
     private var alphabetList: MutableList<Char>,
     private var screenWidth: Int,
-    private val callback: (Char, Int, ViewHolder) -> Unit
+    private val callback: (Int, ViewHolder) -> Unit
 ) : RecyclerView.Adapter<ViewHolder>() {
 
-    fun setAlphaList(list: MutableList<Char>, position: Int) {
+    fun setAlphaList(list: MutableList<Char>) {
         alphabetList = list
         notifyDataSetChanged()
-        //alphabetList.removeAt(position)
     }
 
     /*
@@ -55,12 +54,11 @@ class AlphabetAdapter(
             val alphabet = alphabetList[position]
             holder.textAlpha.text = alphabet.toString()
             holder.itemView.setOnClickListener {
-                callback.invoke(alphabetList[position], position, holder)
+                callback.invoke(position, holder)
                 positionClicked = position
                 delay = 0L
-                //alphabetList.removeAt(position)
             }
-            if (position > positionClicked + 1) {
+            if (position > positionClicked) {
                 if (position % GRID_SIZE != 0) {
                     delay += 200
                     slideLeftAnimation(holder, delay, width)
@@ -69,7 +67,6 @@ class AlphabetAdapter(
                     diagonalAnimation(holder, delay, height, width)
                 }
             }
-            //alphabetList.removeAt(position)
         }
     }
 
@@ -83,13 +80,8 @@ class AlphabetAdapter(
             ObjectAnimator.ofFloat(holder.itemView, View.TRANSLATION_X, x)
         val animateXY = AnimatorSet()
         animateXY.duration = 200
+        animateXY.startDelay = delay
         animateXY.playTogether(listOf(animatorX, animatorY))
-        animateXY.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationStart(animation: Animator?) {
-                super.onAnimationStart(animation)
-                animateXY.startDelay = delay
-            }
-        })
         animateXY.start()
     }
 
@@ -99,12 +91,6 @@ class AlphabetAdapter(
             ObjectAnimator.ofFloat(holder.itemView, View.TRANSLATION_X, x)
         animatorX.duration = 200
         animatorX.startDelay = delay
-        animatorX.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationStart(animation: Animator?) {
-                super.onAnimationStart(animation)
-                animatorX.startDelay = delay
-            }
-        })
         animatorX.start()
     }
 
