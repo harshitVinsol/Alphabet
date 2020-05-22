@@ -43,7 +43,7 @@ class ConfigurationActivity : AppCompatActivity() {
     }
 
     private fun validateAnimationSpeed(): Boolean {
-        return if (animation_speed.text.toString().isBlank() && animation_speed.text.toString().toLong() < 101) {
+        return if (animation_speed.text.toString().isBlank() || animation_speed.text.toString().toLong() < 101) {
             animation_speed_input_layout.error = resources.getString(R.string.animation_speed_error)
             animation_speed.requestFocus()
             false
@@ -58,5 +58,4 @@ class ConfigurationActivity : AppCompatActivity() {
             validateAnimationSpeed()
         }
     }
-
 }

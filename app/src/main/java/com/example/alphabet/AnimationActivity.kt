@@ -21,10 +21,10 @@ class MainActivity : AppCompatActivity() {
 
     private var alphaLayoutManager: GridLayoutManager? = null
     private lateinit var adapter: AlphabetAdapter
-    private var alphaList = mutableListOf<Char>()
     private var animationSpeed = 200L
     private var verticalSpacing = 16
     private var horizontalSpacing = 16
+    private var alphaList = mutableListOf<Char>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
 
         alphaLayoutManager = GridLayoutManager(this, GRID_SIZE)
         alphabet_recyclerview.layoutManager = alphaLayoutManager
+
         adapter = AlphabetAdapter(
             alphaList,
             width
@@ -62,11 +63,8 @@ class MainActivity : AppCompatActivity() {
         flipAnimator.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
                 super.onAnimationEnd(animation)
-                alphabet_recyclerview.adapter?.notifyDataSetChanged()
-            }
-
-            override fun onAnimationStart(animation: Animator?) {
-                super.onAnimationStart(animation)
+                //adapter.setAlphaList(alphaList)
+                alphabet_recyclerview.adapter = adapter
             }
         })
         flipAnimator.start()

@@ -27,8 +27,8 @@ class AlphabetAdapter(
 
     fun setAlphaList(list: MutableList<Char>) {
         alphabetList = list
-        alphabetList.removeAt(positionClicked)
-        notifyItemRangeChanged(positionClicked +1 , alphabetList.size)
+        //notifyItemRangeChanged(positionClicked +1 , alphabetList.size)
+        //alphabetList.removeAt(positionClicked)
     }
 
     /*
@@ -53,7 +53,6 @@ class AlphabetAdapter(
         holder.itemView.post {
             val width = holder.itemView.measuredWidth
             val height = holder.itemView.measuredHeight
-            Log.i("@harsh", "width: ${width} height: ${height}")
             val alphabet = alphabetList[position]
             holder.textAlpha.text = alphabet.toString()
             holder.itemView.isVisible = (position != positionClicked)
@@ -65,25 +64,50 @@ class AlphabetAdapter(
             if (position > positionClicked && position < alphabetList.size) {
                 if (position % GRID_SIZE != 0) {
                     delay += 200
-                    slideLeftAnimation(holder, delay, width, false)
+                    val slideLeftAnimator = slideLeftAnimation(holder, delay, width)
+                    slideLeftAnimator.start()
                 } else {
                     delay += 200
-                    diagonalAnimation(holder, delay, height, width, false)
+                    val diagonalAnimator = diagonalAnimation(holder, delay, height, width)
+                    diagonalAnimator.start()
                 }
-            }
-            else if(position == alphabetList.size){
+            } else if (position == alphabetList.size) {
                 if (position % GRID_SIZE != 0) {
                     delay += 200
-                    slideLeftAnimation(holder, delay, width, true)
+                    val slideLeftAnimator = slideLeftAnimation(holder, delay, width)
+                    slideLeftAnimator.addListener(object : AnimatorListenerAdapter() {
+                        override fun onAnimationEnd(animation: Animator?) {
+                            super.onAnimationEnd(animation)
+                            alphabetList.removeAt(positionClicked)
+                            setAlphaList(alphabetList)
+                        }
+                    })
+                    slideLeftAnimator.start()
                 } else {
                     delay += 200
-                    diagonalAnimation(holder, delay, height, width, true)
+                    val diagonalAnimator = diagonalAnimation(holder, delay, height, width)
+                    diagonalAnimator.addListener(object : AnimatorListenerAdapter() {
+                        override fun onAnimationEnd(animation: Animator?) {
+                            super.onAnimationEnd(animation)
+                            alphabetList.removeAt(positionClicked)
+                            setAlphaList(alphabetList)
+                        }
+                    })
+                    diagonalAnimator.start()
                 }
             }
         }
     }
 
-    private fun diagonalAnimation(holder: ViewHolder, delay: Long, height: Int, width: Int, lastElement: Boolean) {
+    /*
+    Diagonal animation for the left most element of each row
+     */
+    private fun diagonalAnimation(
+        holder: ViewHolder,
+        delay: Long,
+        height: Int,
+        width: Int
+    ): Animator {
         val y = -(height.toFloat())
         val x = screenWidth.toFloat() - (width.toFloat() + 48f)
         Log.i("@harsh", "x: $x y: $y")
@@ -95,36 +119,19 @@ class AlphabetAdapter(
         animateXY.duration = 200
         animateXY.startDelay = delay
         animateXY.playTogether(listOf(animatorX, animatorY))
-        animateXY.start()
-
-        animatorX.addListener(object : AnimatorListenerAdapter(){
-            override fun onAnimationEnd(animation: Animator?) {
-                super.onAnimationEnd(animation)
-                if(lastElement){
-                    alphabetList.removeAt(positionClicked)
-                    //notifyDataSetChanged()
-                }
-            }
-        })
+        return animateXY
     }
 
-    private fun slideLeftAnimation(holder: ViewHolder, delay: Long, width: Int, lastElement: Boolean) {
+    /*
+    slide left animation for each non left most element
+     */
+    private fun slideLeftAnimation(holder: ViewHolder, delay: Long, width: Int): Animator {
         val x = -(width.toFloat())
         val animatorX =
             ObjectAnimator.ofFloat(holder.itemView, View.TRANSLATION_X, x)
         animatorX.duration = 200
         animatorX.startDelay = delay
-        animatorX.start()
-
-        animatorX.addListener(object : AnimatorListenerAdapter(){
-            override fun onAnimationEnd(animation: Animator?) {
-                super.onAnimationEnd(animation)
-                if(lastElement){
-                    alphabetList.removeAt(positionClicked)
-                    //notifyDataSetChanged()
-                }
-            }
-        })
+        return animatorX
     }
 
     companion object {
