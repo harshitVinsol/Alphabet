@@ -4,46 +4,67 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.content.Intent
+import android.graphics.Rect
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Parcelable
-import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
-import kotlinx.android.synthetic.main.activity_main.*
+import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.activity_animation.*
 import kotlinx.android.synthetic.main.top_bar_layout.*
-import java.io.Serializable
 import java.util.ArrayList
 
-class MainActivity : AppCompatActivity() {
+class AnimationActivity : AppCompatActivity() {
 
     private var alphaLayoutManager: GridLayoutManager? = null
     private lateinit var adapter: AlphabetAdapter
     private var animationSpeed = 200L
-    private var verticalSpacing = 16
-    private var horizontalSpacing = 16
-    private var alphaList = mutableListOf<Char>()
+    private var verticalSpacing = 0
+    private var horizontalSpacing = 0
+    private var alphaList = ('A'..'Z').toMutableList()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_animation)
 
-        alphaList = if (savedInstanceState != null) {
-            savedInstanceState.getSerializable(ALPHABET_LIST) as MutableList<Char>
-        } else {
-            ('A'..'Z').toMutableList()
+        if (savedInstanceState != null) {
+            alphaList = savedInstanceState.getSerializable(ALPHABET_LIST) as MutableList<Char>
         }
 
-        val width = resources.displayMetrics.widthPixels
+        animationSpeed = intent.getLongExtra(ANIMATION_SPEED, 200L)
+        verticalSpacing = intent.getIntExtra(VERTICAL_SPACING, 0)
+        horizontalSpacing = intent.getIntExtra(HORIZONTAL_SPACING, 0)
+
+        alphabet_recyclerview.addItemDecoration(object : RecyclerView.ItemDecoration() {
+            override fun getItemOffsets(
+                outRect: Rect,
+                view: View,
+                parent: RecyclerView,
+                state: RecyclerView.State
+            ) {
+                super.getItemOffsets(outRect, view, parent, state)
+                outRect.set(
+                    verticalSpacing / 2,
+                    horizontalSpacing / 2,
+                    verticalSpacing / 2,
+                    horizontalSpacing / 2
+                )
+            }
+        })
+        val screenWidth = resources.displayMetrics.widthPixels
 
         alphaLayoutManager = GridLayoutManager(this, GRID_SIZE)
         alphabet_recyclerview.layoutManager = alphaLayoutManager
 
         adapter = AlphabetAdapter(
             alphaList,
-            width
-        ) { position: Int, holder: ViewHolder ->
+            screenWidth,
+            animationSpeed,
+            verticalSpacing,
+            horizontalSpacing
+        ) { position, holder: ViewHolder ->
             flipAnimation(holder, position)
         }
         alphabet_recyclerview.adapter = adapter
@@ -57,13 +78,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /*
+    Function for the flip animation of the view clicked
+     */
     private fun flipAnimation(holder: ViewHolder, position: Int) {
         val flipAnimator = ObjectAnimator.ofFloat(holder.itemView, View.ROTATION_Y, -180f, 0f)
         flipAnimator.duration = FLIP_ANIMATION_DURATION
         flipAnimator.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
                 super.onAnimationEnd(animation)
-                //adapter.setAlphaList(alphaList)
+                holder.itemView.isVisible = false
+                if (position == alphaList.size - 1) {
+                    alphaList.removeAt(position)
+                }
+                adapter.setAlphaList(alphaList)
                 alphabet_recyclerview.adapter = adapter
             }
         })

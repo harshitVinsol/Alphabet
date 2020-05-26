@@ -8,13 +8,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationSet
 import android.widget.TextView
-import androidx.core.animation.doOnEnd
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.example.alphabet.MainActivity.Companion.GRID_SIZE
-import kotlinx.android.synthetic.main.activity_main.*
+import com.example.alphabet.AnimationActivity.Companion.GRID_SIZE
 
 /*
 Class AddressAdapter to be used in RecyclerView for showing addresses having list of Address and context of Activity called from
@@ -22,13 +19,15 @@ Class AddressAdapter to be used in RecyclerView for showing addresses having lis
 class AlphabetAdapter(
     private var alphabetList: MutableList<Char>,
     private var screenWidth: Int,
+    private var animationSpeed: Long,
+    private var verticalSpacing: Int,
+    private var horizontalSpacing: Int,
     private val callback: (Int, ViewHolder) -> Unit
 ) : RecyclerView.Adapter<ViewHolder>() {
 
     fun setAlphaList(list: MutableList<Char>) {
         alphabetList = list
-        //notifyItemRangeChanged(positionClicked +1 , alphabetList.size)
-        //alphabetList.removeAt(positionClicked)
+        notifyItemRangeChanged(positionClicked, alphabetList.size + 1)
     }
 
     /*
@@ -55,42 +54,41 @@ class AlphabetAdapter(
             val height = holder.itemView.measuredHeight
             val alphabet = alphabetList[position]
             holder.textAlpha.text = alphabet.toString()
-            holder.itemView.isVisible = (position != positionClicked)
+            //holder.itemView.isVisible = (position != positionClicked)
             holder.itemView.setOnClickListener {
                 callback.invoke(position, holder)
                 positionClicked = position
                 delay = 0L
+                Log.i("@harsh", "${alphabetList.size}")
             }
-            if (position > positionClicked && position < alphabetList.size) {
+            if (position > positionClicked && position < alphabetList.size - 1) {
                 if (position % GRID_SIZE != 0) {
-                    delay += 200
+                    delay += animationSpeed
                     val slideLeftAnimator = slideLeftAnimation(holder, delay, width)
                     slideLeftAnimator.start()
                 } else {
-                    delay += 200
+                    delay += animationSpeed
                     val diagonalAnimator = diagonalAnimation(holder, delay, height, width)
                     diagonalAnimator.start()
                 }
-            } else if (position == alphabetList.size) {
+            } else if (position > positionClicked && position == alphabetList.size - 1) {
                 if (position % GRID_SIZE != 0) {
-                    delay += 200
+                    delay += animationSpeed
                     val slideLeftAnimator = slideLeftAnimation(holder, delay, width)
                     slideLeftAnimator.addListener(object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(animation: Animator?) {
                             super.onAnimationEnd(animation)
                             alphabetList.removeAt(positionClicked)
-                            setAlphaList(alphabetList)
                         }
                     })
                     slideLeftAnimator.start()
                 } else {
-                    delay += 200
+                    delay += animationSpeed
                     val diagonalAnimator = diagonalAnimation(holder, delay, height, width)
                     diagonalAnimator.addListener(object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(animation: Animator?) {
                             super.onAnimationEnd(animation)
                             alphabetList.removeAt(positionClicked)
-                            setAlphaList(alphabetList)
                         }
                     })
                     diagonalAnimator.start()
@@ -108,15 +106,14 @@ class AlphabetAdapter(
         height: Int,
         width: Int
     ): Animator {
-        val y = -(height.toFloat())
-        val x = screenWidth.toFloat() - (width.toFloat() + 48f)
-        Log.i("@harsh", "x: $x y: $y")
+        val y = -(height.toFloat() + horizontalSpacing.toFloat())
+        val x = screenWidth.toFloat() - (width.toFloat() + 48f + (verticalSpacing.toFloat()))
         val animatorY =
             ObjectAnimator.ofFloat(holder.itemView, View.TRANSLATION_Y, y)
         val animatorX =
             ObjectAnimator.ofFloat(holder.itemView, View.TRANSLATION_X, x)
         val animateXY = AnimatorSet()
-        animateXY.duration = 200
+        animateXY.duration = animationSpeed
         animateXY.startDelay = delay
         animateXY.playTogether(listOf(animatorX, animatorY))
         return animateXY
@@ -126,10 +123,10 @@ class AlphabetAdapter(
     slide left animation for each non left most element
      */
     private fun slideLeftAnimation(holder: ViewHolder, delay: Long, width: Int): Animator {
-        val x = -(width.toFloat())
+        val x = -(width.toFloat() + verticalSpacing.toFloat())
         val animatorX =
             ObjectAnimator.ofFloat(holder.itemView, View.TRANSLATION_X, x)
-        animatorX.duration = 200
+        animatorX.duration = animationSpeed
         animatorX.startDelay = delay
         return animatorX
     }

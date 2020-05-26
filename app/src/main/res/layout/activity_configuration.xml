@@ -21,7 +21,7 @@
             android:id="@+id/animation_speed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Animation Speed"
+            android:hint="@string/animation_speed"
             android:inputType="number"
             android:textColor="@color/black"
             android:textSize="16sp" />
@@ -42,7 +42,7 @@
             android:id="@+id/horizontal_spacing"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Horizontal Spacing"
+            android:hint="@string/horizontal_spacing"
             android:inputType="number"
             android:textColor="@color/black"
             android:textSize="16sp" />
@@ -63,22 +63,23 @@
             android:id="@+id/vertical_spacing"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Horizontal Spacing"
+            android:hint="@string/vertical_spacing"
             android:inputType="number"
             android:textColor="@color/black"
             android:textSize="16sp" />
     </com.google.android.material.textfield.TextInputLayout>
+
     <Button
         android:id="@+id/button_make_changes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        android:text="Make Changes"
-        android:background="@color/colorAccent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/vertical_spacing_input_layout"
-        android:layout_marginTop="20dp"
         android:layout_marginStart="60dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="60dp"
-        android:textColor="@color/white"/>
+        android:background="@color/colorAccent"
+        android:text="@string/make_changes"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/vertical_spacing_input_layout" />
 </androidx.constraintlayout.widget.ConstraintLayout>
