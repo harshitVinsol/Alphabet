@@ -28,7 +28,8 @@ class AlphabetAdapter(
 
     fun setAlphaList(list: MutableList<Char>) {
         alphabetList = list
-        notifyItemRangeChanged(positionClicked, alphabetList.size + 1)
+        //notifyDataSetChanged()
+        notifyItemRangeChanged(positionClicked, alphabetList.size - positionClicked)
     }
 
     /*
@@ -60,7 +61,8 @@ class AlphabetAdapter(
                 callback.invoke(position, holder)
                 positionClicked = position
                 delay = 0L
-                //Log.i("@harsh", "${alphabetList.size}")
+                alphabetToBeDeleted = alphabetList[position] 
+                Log.i("@harsh", "Alphabet clicked: ${alphabetToBeDeleted}")
             }
             if (position > positionClicked && position < alphabetList.size - 1) {
                 if (position % GRID_SIZE != 0) {
@@ -79,7 +81,9 @@ class AlphabetAdapter(
                     slideLeftAnimator.addListener(object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(animation: Animator?) {
                             super.onAnimationEnd(animation)
-                            alphabetList.removeAt(positionClicked)
+                            Log.i("@harsh", "Alphabet deleted: ${alphabetList[positionClicked]}")
+                            alphabetList.remove(alphabetToBeDeleted)
+                            //alphabetList.removeAt(positionClicked)
                         }
                     })
                     slideLeftAnimator.start()
@@ -89,12 +93,13 @@ class AlphabetAdapter(
                     diagonalAnimator.addListener(object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(animation: Animator?) {
                             super.onAnimationEnd(animation)
-                            alphabetList.removeAt(positionClicked)
+                            Log.i("@harsh", "Alphabet deleted: ${alphabetList[positionClicked]}")
+                            alphabetList.remove(alphabetToBeDeleted)
+                            //alphabetList.removeAt(positionClicked)
                         }
                     })
                     diagonalAnimator.start()
                 }
-                Log.i("@harsh", "${alphabetList.size}")
             }
         }
     }
@@ -136,6 +141,7 @@ class AlphabetAdapter(
     companion object {
         private var positionClicked: Int = 26
         private var delay = 0L
+        private var alphabetToBeDeleted: Char = 'a'
     }
 }
 

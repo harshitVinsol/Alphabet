@@ -8,6 +8,7 @@ import android.graphics.Rect
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Parcelable
+import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
@@ -68,6 +69,7 @@ class AnimationActivity : AppCompatActivity() {
             flipAnimation(holder, position)
         }
         alphabet_recyclerview.adapter = adapter
+        alphabet_recyclerview.setItemViewCacheSize(26)
 
         button_configure.setOnClickListener {
             val intent = Intent(this, ConfigurationActivity::class.java)
@@ -89,6 +91,7 @@ class AnimationActivity : AppCompatActivity() {
                 super.onAnimationEnd(animation)
                 holder.itemView.isVisible = false
                 if (position == alphaList.size - 1) {
+                    Log.i("@harsh", "Alphabet deleted: ${alphaList[position]}")
                     alphaList.removeAt(position)
                 }
                 adapter.setAlphaList(alphaList)
