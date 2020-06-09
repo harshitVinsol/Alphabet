@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
+import android.widget.Toast
 import com.example.alphabet.AnimationActivity.Companion.ANIMATION_SPEED
 import com.example.alphabet.AnimationActivity.Companion.HORIZONTAL_SPACING
 import com.example.alphabet.AnimationActivity.Companion.VERTICAL_SPACING
@@ -61,6 +62,11 @@ class ConfigurationActivity : AppCompatActivity() {
             animation_speed_input_layout.error = resources.getString(R.string.animation_speed_error)
             animation_speed.requestFocus()
             false
+        } else if (animation_speed.text.toString()
+                .toLong() > 1000
+        ) {
+            Toast.makeText(this, R.string.animation_speed_too_slow, Toast.LENGTH_SHORT).show()
+            true
         } else {
             animation_speed_input_layout.error = null
             true
@@ -71,14 +77,23 @@ class ConfigurationActivity : AppCompatActivity() {
     A boolean function to check the validation of horizontal spacing it should not be blank instead can be 0
      */
     private fun validateHorizontalSpacing(): Boolean {
-        return if (horizontal_spacing.text.toString().isBlank()) {
-            horizontal_spacing_input_layout.error =
-                resources.getString(R.string.horizontal_spacing_error)
-            horizontal_spacing.requestFocus()
-            false
-        } else {
-            horizontal_spacing_input_layout.error = null
-            true
+        return when {
+            horizontal_spacing.text.toString().isBlank() -> {
+                horizontal_spacing_input_layout.error =
+                    resources.getString(R.string.horizontal_spacing_error)
+                horizontal_spacing.requestFocus()
+                false
+            }
+            horizontal_spacing.text.toString().toInt() > 50 -> {
+                horizontal_spacing_input_layout.error =
+                    resources.getString(R.string.horizontal_spacing_limit_error)
+                horizontal_spacing.requestFocus()
+                false
+            }
+            else -> {
+                horizontal_spacing_input_layout.error = null
+                true
+            }
         }
     }
 
@@ -86,14 +101,23 @@ class ConfigurationActivity : AppCompatActivity() {
     A boolean function to check the validation of vertical spacing it should not be blank instead can be 0
      */
     private fun validateVerticalSpacing(): Boolean {
-        return if (vertical_spacing.text.toString().isBlank()) {
-            vertical_spacing_input_layout.error =
-                resources.getString(R.string.vertical_spacing_error)
-            vertical_spacing.requestFocus()
-            false
-        } else {
-            vertical_spacing_input_layout.error = null
-            true
+        return when {
+            vertical_spacing.text.toString().isBlank() -> {
+                vertical_spacing_input_layout.error =
+                    resources.getString(R.string.vertical_spacing_error)
+                vertical_spacing.requestFocus()
+                false
+            }
+            vertical_spacing.text.toString().toInt() > 50 -> {
+                vertical_spacing_input_layout.error =
+                    resources.getString(R.string.vertical_spacing_limit_error)
+                vertical_spacing.requestFocus()
+                false
+            }
+            else -> {
+                vertical_spacing_input_layout.error = null
+                true
+            }
         }
     }
 

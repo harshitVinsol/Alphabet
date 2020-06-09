@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.alphabet.AnimationActivity.Companion.GRID_SIZE
+import kotlinx.android.synthetic.main.activity_animation.*
 
 /*
 Class AddressAdapter to be used in RecyclerView for showing addresses having list of Address and context of Activity called from
@@ -59,7 +60,7 @@ class AlphabetAdapter(
                 callback.invoke(position, holder)
                 positionClicked = position
                 delay = 0L
-                Log.i("@harsh", "${alphabetList.size}")
+                //Log.i("@harsh", "${alphabetList.size}")
             }
             if (position > positionClicked && position < alphabetList.size - 1) {
                 if (position % GRID_SIZE != 0) {
@@ -93,6 +94,7 @@ class AlphabetAdapter(
                     })
                     diagonalAnimator.start()
                 }
+                Log.i("@harsh", "${alphabetList.size}")
             }
         }
     }

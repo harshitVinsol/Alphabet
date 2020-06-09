@@ -4,8 +4,11 @@
     <string name="items_list">Items List</string>
     <string name="configure">Configure</string>
     <string name="animation_speed_error">Animation speed should be more than 50</string>
+    <string name="animation_speed_too_slow">CAUTION : The animation will test your patience at this speed</string>
     <string name="vertical_spacing_error">Vertical Spacing can not be empty. Put 0 instead</string>
     <string name="horizontal_spacing_error">Horizontal Spacing can not be empty. Put 0 instead</string>
+    <string name="vertical_spacing_limit_error">Vertical Spacing can not be more than 50</string>
+    <string name="horizontal_spacing_limit_error">Horizontal Spacing can not be more than 50</string>
     <string name="vertical_spacing">Vertical Spacing</string>
     <string name="horizontal_spacing">Horizontal Spacing</string>
     <string name="animation_speed">Animation Speed</string>
